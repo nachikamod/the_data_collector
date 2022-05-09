@@ -27,6 +27,10 @@ class _DatasetScreenState extends State<DatasetScreen> {
   // ignore: non_constant_identifier_names
   late String? t_name;
 
+  var data = {
+    "name": "Hello"
+  };
+
   _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

@@ -22,7 +22,6 @@ class DBService {
   static Database? _database;
   Future<Database> get database async {
     if (_database != null) return _database!;
-
     _database = await _initDatabase();
     return _database!;
   }
@@ -72,7 +71,6 @@ class DBService {
   Future<List<DatasetModel>> datasets() async {
     final db = await _dbService.database;
     final List<Map<String, dynamic>> maps = await db.query(TableNames.DATASET);
-
     return List.generate(maps.length, (index) => DatasetModel.fromMap(maps[index]));
   }
 

@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
         RouteStrings.DATASET: (context) => const DatasetScreen(),
         RouteStrings.DATASET_FORM: (context) => const DataScreenForm(),
         RouteStrings.LOGIN_SCREEN: (context) => const LoginScreen(),
-        RouteStrings.CREATE_ACC: (context) => const CreateAccountScreen()
+        RouteStrings.CREATE_ACC: (context) => const CreateAccountScreen(),
       },
     );
   }

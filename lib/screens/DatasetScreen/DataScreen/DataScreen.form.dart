@@ -67,7 +67,7 @@ class _DataScreenFormState extends State<DataScreenForm> {
 
                           if (status_camera.isRestricted ||
                               status_camera.isDenied) {
-                            await Permission.camera.request();
+                              await Permission.camera.request();
                           }
 
                           if (status_storage.isRestricted ||
@@ -139,7 +139,7 @@ class _DataScreenFormState extends State<DataScreenForm> {
             initialValue: _formData[mapJSON['name']],
             onChanged: (val) {
               if (val != "") {
-                _formData[mapJSON['name']] = val;
+                _formData['[${mapJSON['name']}]'] = val;
               }
             },
             maxLines: null,
@@ -162,7 +162,7 @@ class _DataScreenFormState extends State<DataScreenForm> {
             initialValue: _formData[mapJSON['name']],
             onChanged: (val) {
               if (val != "") {
-                _formData[mapJSON['name']] = val;
+                _formData['[${mapJSON['name']}]'] = val;
               }
             },
             style: const TextStyle(color: Colors.white),
@@ -211,7 +211,7 @@ class _DataScreenFormState extends State<DataScreenForm> {
               items: dm_list,
               onChanged: (dynamic val) {
                 if (val != null) {
-                  _formData[mapJSON['name']] = val;
+                  _formData['[${mapJSON['name']}]'] = val;
                 }
               });
       }
@@ -307,48 +307,55 @@ class _DataScreenFormState extends State<DataScreenForm> {
                                             .validate()) {
 
 
-                                          String path = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOCUMENTS);
-                                          String root = path + '/' + _dataset.t_name;
-                                          Directory storage = Directory(root);
 
-                                          Map<String, dynamic> _toAdd = {};
-                                          List _toRemove = [];
+                                            String path = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOCUMENTS);
+                                            String root = path + '/' + _dataset.t_name;
+                                            Directory storage = Directory(root);
 
-                                          for (String key in _formData.keys) {
-                                            if (RegExp(r'[a-zA-Z0-9@#$\*&()_\-\s]+_raw').hasMatch(key)) {
+                                            Map<String, dynamic> _toAdd = {};
+                                            List _toRemove = [];
 
-                                              if (!await storage.exists()) {
-                                                await storage.create();
+                                            for (String key in _formData.keys) {
+                                              if (RegExp(r'[a-zA-Z0-9@#$\*&()_\-\s]+_raw').hasMatch(key)) {
+
+                                                if (!await storage.exists()) {
+                                                  await storage.create().catchError((error){
+                                                    _notify(true,
+                                                        error.toString());
+                                                  });
+                                                }
+
+                                                Directory _namedStorage = Directory(root + '/' + key.split('_raw')[0]);
+                                                if (!await _namedStorage.exists()) {
+                                                  await _namedStorage.create();
+                                                }
+
+                                                String file_name = getRandomString(10) + '.png';
+                                                String _savePath = _namedStorage.path + '/' + file_name;
+                                                await File((_formData[key] as XFile).path).copy(_savePath);
+                                                _toRemove.add(key);
+                                                _toAdd['[${key.split('_raw')[0]}]'] = key.split('_raw')[0] + '/' + file_name;
+
+
                                               }
-
-                                              Directory _namedStorage = Directory(root + '/' + key.split('_raw')[0]);
-                                              if (!await _namedStorage.exists()) {
-                                                await _namedStorage.create();
-                                              }
-
-                                              String file_name = getRandomString(10) + '.png';
-                                              String _savePath = _namedStorage.path + '/' + file_name;
-                                              await File((_formData[key] as XFile).path).copy(_savePath);
-                                              _toRemove.add(key);
-                                              _toAdd[key.split('_raw')[0]] = key.split('_raw')[0] + '/' + file_name;
                                             }
-                                          }
 
-                                          _formData.removeWhere((key, value) => _toRemove.contains(key));
-                                          _formData.addAll(_toAdd);
+                                            _formData.removeWhere((key, value) => _toRemove.contains(key));
+                                            _formData.addAll(_toAdd);
 
-                                          await _dbService.insertData(_dataset.t_name, _formData);
+                                            await _dbService.insertData(_dataset.t_name, _formData);
 
-                                          setState(() {
+                                            setState(() {
 
-                                            _progress = false;
+                                              _progress = false;
 
-                                          });
+                                            });
 
-                                          _notify(false, 'Created!');
+                                            _notify(false, 'Created!');
 
-                                          _formData = {};
-                                          _dynFormKey.currentState!.reset();
+                                            _formData = {};
+                                            _dynFormKey.currentState!.reset();
+
                                           //Navigator.pop(context);
 
                                         } else {

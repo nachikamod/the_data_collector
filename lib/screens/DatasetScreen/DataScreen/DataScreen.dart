@@ -51,59 +51,62 @@ class _DataScreenState extends State<DataScreen> {
       if (struct.isNotEmpty) {
         switch (struct.elementAt(0)['type']) {
           case DataTypes.IMAGE:
-            _data.add(FutureBuilder<String>(
-                future: ExternalPath.getExternalStoragePublicDirectory(
-                    ExternalPath.DIRECTORY_DOCUMENTS),
-                builder: (context, file) {
-                  if (file.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+            if (snapshot[key] != null){
+              _data.add(FutureBuilder<String>(
+                  future: ExternalPath.getExternalStoragePublicDirectory(
+                      ExternalPath.DIRECTORY_DOCUMENTS),
+                  builder: (context, file) {
+                    if (file.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                  if (file.hasError) {
-                    return const Center(
-                      child: Text(
-                        'Storage exception',
-                        style: TextStyle(color: Colors.white),
+                    if (file.hasError) {
+                      return const Center(
+                        child: Text(
+                          'Storage exception',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }
+
+                    return Container(
+                      margin: const EdgeInsets.all(10),
+                      child: Wrap(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                      color: Color(CustomColors.ASSETS_DARK),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Text(
+                                    key,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500),
+                                  )),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Image.file(File(file.data! +
+                                  '/' +
+                                  widget.TABLE_NAME +
+                                  '/' +
+                                  snapshot[key]))
+                            ],
+                          ),
+                        ],
                       ),
                     );
-                  }
-
-                  return Container(
-                    margin: const EdgeInsets.all(10),
-                    child: Wrap(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                decoration: BoxDecoration(
-                                    color: Color(CustomColors.ASSETS_DARK),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Text(
-                                  key,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
-                                )),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Image.file(File(file.data! +
-                                '/' +
-                                widget.TABLE_NAME +
-                                '/' +
-                                snapshot[key]))
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }));
+                  }));
+            }
             break;
           case DataTypes.TEXT:
+            if (snapshot[key] != null) {
             _data.add(Container(
               width: double.infinity,
               margin: const EdgeInsets.all(10),
@@ -142,89 +145,97 @@ class _DataScreenState extends State<DataScreen> {
                   )
                 ],
               ),
-            ));
+            ));}
             break;
           case DataTypes.NUMERIC:
-            _data.add(Container(
-              width: double.infinity,
-              margin: const EdgeInsets.all(10),
-              child: Wrap(
-                direction: Axis.vertical,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                alignment: WrapAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Color(CustomColors.ASSETS_DARK),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            key,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          )),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            snapshot[key].toString(),
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          )),
-                    ],
-                  )
-                ],
-              ),
-            ));
+            if (snapshot[key] != null){
+              _data.add(Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(10),
+                child: Wrap(
+                  direction: Axis.vertical,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: Color(CustomColors.ASSETS_DARK),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text(
+                              key,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500),
+                            )),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text(
+                              snapshot[key].toString(),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500),
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              ));
+            }
             break;
           case DataTypes.D_LIST:
-            _data.add(Container(
-              width: double.infinity,
-              margin: const EdgeInsets.all(10),
-              child: Wrap(
-                direction: Axis.vertical,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                alignment: WrapAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Color(CustomColors.ASSETS_DARK),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            key,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          )),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            snapshot[key],
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          )),
-                    ],
-                  )
-                ],
-              ),
-            ));
+            if (snapshot[key] != null){
+              _data.add(Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(10),
+                child: Wrap(
+                  direction: Axis.vertical,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: Color(CustomColors.ASSETS_DARK),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text(
+                              key,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500),
+                            )),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text(
+                              snapshot[key],
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500),
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              ));
+            }
             break;
         }
       }
